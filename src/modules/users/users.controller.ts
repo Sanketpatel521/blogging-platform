@@ -20,8 +20,9 @@ export class UsersController {
     try {
       const createdUser = await this.usersService.createUser(userDto);
 
-      //return plainToClass(UserResponseDto, createdUser);
-      return createdUser;
+      return plainToClass(UserResponseDto, createdUser?.toObject(), {
+        strategy: 'excludeAll',
+      });
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
