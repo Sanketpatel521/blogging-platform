@@ -23,12 +23,7 @@ export class AuthService {
   }
 
   async decodeJwtToken(token: string): Promise<any> {
-    try {
-      const decoded = await this.jwtService.verifyAsync(token);
-      return decoded;
-    } catch (error) {
-      console.error('Error decoding JWT token:', error.message);
-      return null;
-    }
+    const decoded = await this.jwtService.verifyAsync(token);
+    return decoded;
   }
 }

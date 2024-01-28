@@ -17,24 +17,15 @@ export class UsersController {
 
   @Post('register')
   async create(@Body() userDto: CreateUserDto): Promise<UserResponseDto> {
-    try {
-      const createdUser = await this.usersService.createUser(userDto);
-
-      return plainToClass(UserResponseDto, createdUser?.toObject(), {
-        strategy: 'excludeAll',
-      });
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    const createdUser = await this.usersService.createUser(userDto);
+    return plainToClass(UserResponseDto, createdUser?.toObject(), {
+      strategy: 'excludeAll',
+    });
   }
 
   @Post('login')
   async login(@Body() userDto: LoginUserDto): Promise<{ token: string }> {
-    try {
-      const { token } = await this.usersService.login(userDto);
-      return { token };
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.UNAUTHORIZED);
-    }
+    const { token } = await this.usersService.login(userDto);
+    return { token };
   }
 }
