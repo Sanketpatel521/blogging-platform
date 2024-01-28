@@ -12,11 +12,10 @@ export class ErrorLoggingMiddleware implements NestMiddleware {
       const { statusCode } = res;
 
       if (statusCode >= 400) {
-        this.logger.log(
-          `Method: ${method} URL: ${originalUrl} Status Code: ${statusCode} Request body:
-        ${JSON.stringify(body, null, 2)}
-        `,
-        );
+        let logMessage = `Method: ${method} URL: ${originalUrl} Status Code: ${statusCode}`
+        if(Object.keys(body).length !== 0)
+        logMessage += `Request body: ${JSON.stringify(body, null, 2)}`
+        this.logger.log(logMessage);
       }
     });
 

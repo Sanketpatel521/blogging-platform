@@ -45,15 +45,4 @@ describe('AuthService', () => {
       expect(result).toEqual('mockToken');
     });
   });
-
-  describe('decodeJwtToken', () => {
-    it('should decode a JWT token', async () => {
-      const mockDecodedToken = { userId: 'mockUserId' };
-      jest
-        .spyOn(jwtService, 'verifyAsync')
-        .mockResolvedValueOnce(mockDecodedToken);
-      const result = await authService.decodeJwtToken('mockToken');
-      expect(result).toEqual(mockDecodedToken);
-    });
-  });
 });

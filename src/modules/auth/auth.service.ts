@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { ObjectId } from 'mongoose';
 
 @Injectable()
 export class AuthService {
@@ -20,10 +19,5 @@ export class AuthService {
 
   generateJwtToken(payload: { userId: string }): string {
     return this.jwtService.sign(payload);
-  }
-
-  async decodeJwtToken(token: string): Promise<any> {
-    const decoded = await this.jwtService.verifyAsync(token);
-    return decoded;
   }
 }
