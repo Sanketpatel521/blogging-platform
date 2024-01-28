@@ -1,11 +1,10 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User, UserDocument } from './user.model';
 import { AuthService } from '../auth/auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
-import { CustomError } from 'src/util/custom-error';
 
 @Injectable()
 export class UsersService {
@@ -17,25 +16,19 @@ export class UsersService {
   async createUser(userDto: CreateUserDto): Promise<UserDocument> {
     const existingUser = await this.userModel.findOne({ email: userDto.email });
     if (existingUser) {
-      throw new CustomError(
-        'User with that email already exists',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new Error('User with that email already exists');
     }
 
     // Hash password before saving
     userDto.password = await this.authService.hashPassword(userDto.password);
-    const createdUser = new this.userModel(userDto);
-    return await createdUser.save();
+    const createdUser = await this.userModel.create(userDto);
+    return createdUser;
   }
 
   async login(userDto: LoginUserDto): Promise<{ token: string }> {
     const foundUser = await this.userModel.findOne({ email: userDto.email });
     if (!foundUser) {
-      throw new CustomError(
-        'Invalid email or password',
-        HttpStatus.UNAUTHORIZED,
-      );
+      throw new Error('Invalid email or password');
     }
 
     // Compare password with hashed password
@@ -44,10 +37,7 @@ export class UsersService {
       foundUser.password,
     );
     if (!passwordMatch) {
-      throw new CustomError(
-        'Invalid email or password',
-        HttpStatus.UNAUTHORIZED,
-      );
+      throw new Error('Invalid email or password');
     }
 
     // Generate JWT token
