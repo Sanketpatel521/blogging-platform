@@ -1,4 +1,5 @@
-import { Expose } from 'class-transformer';
+import { Expose, plainToClass } from 'class-transformer';
+import { UserDocument } from '../user.model';
 
 export class UserResponseDto {
   @Expose()
@@ -9,4 +10,10 @@ export class UserResponseDto {
   phoneNumber: string;
   @Expose()
   address: string;
+
+  static getUserResponseDto(user: UserDocument): UserResponseDto {
+    return plainToClass(UserResponseDto, user?.toObject(), {
+      strategy: 'excludeAll',
+    });
+  }
 }

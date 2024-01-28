@@ -20,13 +20,17 @@ describe('AuthGuard', () => {
     const result = await authGuard.canActivate(context);
 
     expect(result).toEqual(true);
-    expect(context.switchToHttp().getRequest().user).toEqual({ userId: 'user123' });
+    expect(context.switchToHttp().getRequest().user).toEqual({
+      userId: 'user123',
+    });
   });
 
   it('should throw UnauthorizedException when no token is present', async () => {
     const context = createContextWithToken(undefined);
 
-    await expect(authGuard.canActivate(context)).rejects.toThrow(UnauthorizedException);
+    await expect(authGuard.canActivate(context)).rejects.toThrow(
+      UnauthorizedException,
+    );
     expect(context.switchToHttp().getRequest().user).toBeUndefined();
   });
 
@@ -37,7 +41,9 @@ describe('AuthGuard', () => {
       throw new Error('Invalid token');
     });
 
-    await expect(authGuard.canActivate(context)).rejects.toThrow(UnauthorizedException);
+    await expect(authGuard.canActivate(context)).rejects.toThrow(
+      UnauthorizedException,
+    );
     expect(context.switchToHttp().getRequest().user).toBeUndefined();
   });
 
