@@ -7,7 +7,7 @@ import { LoginUserDto } from './dto/login-user.dto';
 import { AuthGuard } from '../../guards/auth/auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
 
-jest.mock('./users.service'); // Mock the UsersService
+jest.mock('./users.service');
 
 describe('UsersController', () => {
   let usersController: UsersController;

@@ -1,5 +1,6 @@
-import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import { ExecutionContext, HttpStatus, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard } from './auth.guard';
+import { CustomError } from '../../utils/custom-error';
 
 describe('AuthGuard', () => {
   let authGuard: AuthGuard;
@@ -29,7 +30,7 @@ describe('AuthGuard', () => {
     const context = createContextWithToken(undefined);
 
     await expect(authGuard.canActivate(context)).rejects.toThrow(
-      UnauthorizedException,
+      new CustomError('Unauthorized', HttpStatus.UNAUTHORIZED),
     );
     expect(context.switchToHttp().getRequest().user).toBeUndefined();
   });
@@ -42,7 +43,7 @@ describe('AuthGuard', () => {
     });
 
     await expect(authGuard.canActivate(context)).rejects.toThrow(
-      UnauthorizedException,
+      new CustomError('Unauthorized', HttpStatus.UNAUTHORIZED),
     );
     expect(context.switchToHttp().getRequest().user).toBeUndefined();
   });

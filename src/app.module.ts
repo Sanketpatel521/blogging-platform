@@ -5,7 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
-import { ErrorLoggingMiddleware } from './middleware/logging/error-logging.middleware';
+import { ErrorLoggingMiddleware } from './middlewares/logging/error-logging.middleware';
 import { APP_FILTER } from '@nestjs/core';
 import { ErrorFilter } from './filters/error/error.filter';
 

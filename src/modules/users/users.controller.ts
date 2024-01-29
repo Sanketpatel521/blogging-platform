@@ -3,8 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpException,
-  HttpStatus,
   Post,
   Put,
   Request,
@@ -29,31 +27,31 @@ export class UsersController {
 
   @Post('login')
   async login(@Body() userDto: LoginUserDto): Promise<{ token: string }> {
-      const { token } = await this.usersService.login(userDto);
-      return { token };
+    const { token } = await this.usersService.login(userDto);
+    return { token };
   }
 
   @UseGuards(AuthGuard)
   @Put('update')
   async updateUser(@Request() req, @Body() updateUserDto: UpdateUserDto) {
-      return UserResponseDto.getUserResponseDto(
-        await this.usersService.updateUser(req.user.userId, updateUserDto),
-      );
+    return UserResponseDto.getUserResponseDto(
+      await this.usersService.updateUser(req.user.userId, updateUserDto),
+    );
   }
 
   @UseGuards(AuthGuard)
   @Get('profile')
   async getUserProfile(@Request() req) {
-      return UserResponseDto.getUserResponseDto(
-        await this.usersService.getUserById(req.user.userId),
-      );
+    return UserResponseDto.getUserResponseDto(
+      await this.usersService.getUserById(req.user.userId),
+    );
   }
 
   @UseGuards(AuthGuard)
   @Delete('delete')
   async deleteUser(@Request() req) {
-      return UserResponseDto.getUserResponseDto(
-        await this.usersService.deleteUserById(req.user.userId),
-      );
+    return UserResponseDto.getUserResponseDto(
+      await this.usersService.deleteUserById(req.user.userId),
+    );
   }
 }

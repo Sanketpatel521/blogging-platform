@@ -8,7 +8,7 @@ import { LoginUserDto } from './dto/login-user.dto';
 import { Model } from 'mongoose';
 import { UpdateUserDto } from './dto/update-user.dto';
 
-jest.mock('../auth/auth.service'); // Mock the AuthService
+jest.mock('../auth/auth.service');
 
 describe('UsersService', () => {
   let usersService: UsersService;

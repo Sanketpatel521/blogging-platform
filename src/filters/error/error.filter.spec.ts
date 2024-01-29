@@ -1,8 +1,4 @@
-import {
-  ArgumentsHost,
-  BadRequestException,
-  HttpStatus,
-} from '@nestjs/common';
+import { ArgumentsHost, BadRequestException, HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
 import { ErrorFilter } from './error.filter';
 import { CustomError } from '../../utils/custom-error';
