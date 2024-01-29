@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
 import * as bcrypt from 'bcrypt';
 
 jest.mock('@nestjs/jwt');
@@ -43,6 +44,40 @@ describe('AuthService', () => {
       jest.spyOn(jwtService, 'sign').mockReturnValueOnce('mockToken');
       const result = authService.generateJwtToken({ userId: 'mockUserId' });
       expect(result).toEqual('mockToken');
+    });
+  });
+
+  describe('decodeJwtToken', () => {
+    it('should decode a JWT token', async () => {
+      const mockDecodedToken = { userId: 'mockUserId' };
+      jest
+        .spyOn(jwtService, 'verifyAsync')
+        .mockResolvedValueOnce(mockDecodedToken);
+      const result = await authService.decodeJwtToken('mockToken');
+      expect(result).toEqual(mockDecodedToken);
+    });
+  });
+
+  describe('extractTokenFromHeader', () => {
+    it('should extract the token from the Authorization header', () => {
+      const request: any = { headers: { authorization: 'Bearer testToken' } };
+      const result = authService.extractTokenFromHeader(request);
+
+      expect(result).toEqual('testToken');
+    });
+
+    it('should return undefined if Authorization header is missing', () => {
+      const request: any = { headers: {} };
+      const result = authService.extractTokenFromHeader(request);
+
+      expect(result).toBeUndefined();
+    });
+
+    it('should return undefined if Authorization header is malformed', () => {
+      const request: any = { headers: { authorization: 'InvalidFormat' } };
+      const result = authService.extractTokenFromHeader(request);
+
+      expect(result).toBeUndefined();
     });
   });
 });

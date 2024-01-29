@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -19,5 +20,15 @@ export class AuthService {
 
   generateJwtToken(payload: { userId: string }): string {
     return this.jwtService.sign(payload);
+  }
+
+  async decodeJwtToken(token: string): Promise<any> {
+    const decoded = await this.jwtService.verifyAsync(token);
+    return decoded;
+  }
+
+  extractTokenFromHeader(request: Request): string | undefined {
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+    return type === 'Bearer' ? token : undefined;
   }
 }

@@ -1,22 +1,24 @@
-import { ExecutionContext, HttpStatus, UnauthorizedException } from '@nestjs/common';
+import { ExecutionContext, HttpStatus } from '@nestjs/common';
 import { AuthGuard } from './auth.guard';
 import { CustomError } from '../../utils/custom-error';
 
 describe('AuthGuard', () => {
   let authGuard: AuthGuard;
 
-  const mockJwtService = {
-    verifyAsync: jest.fn(),
+  const mockAuthService = {
+    extractTokenFromHeader: jest.fn(),
+    decodeJwtToken: jest.fn(),
   } as any;
 
   beforeEach(() => {
-    authGuard = new AuthGuard(mockJwtService);
+    authGuard = new AuthGuard(mockAuthService);
   });
 
   it('should allow access when a valid token is present', async () => {
     const context = createContextWithToken('valid-token');
 
-    mockJwtService.verifyAsync.mockReturnValueOnce({ userId: 'user123' });
+    mockAuthService.extractTokenFromHeader.mockReturnValueOnce('valid-token');
+    mockAuthService.decodeJwtToken.mockReturnValueOnce({ userId: 'user123' });
 
     const result = await authGuard.canActivate(context);
 
@@ -38,7 +40,8 @@ describe('AuthGuard', () => {
   it('should throw UnauthorizedException when token verification fails', async () => {
     const context = createContextWithToken('invalid-token');
 
-    mockJwtService.verifyAsync.mockImplementationOnce(() => {
+    mockAuthService.extractTokenFromHeader.mockReturnValueOnce('invalid-token');
+    mockAuthService.decodeJwtToken.mockImplementationOnce(() => {
       throw new Error('Invalid token');
     });
 

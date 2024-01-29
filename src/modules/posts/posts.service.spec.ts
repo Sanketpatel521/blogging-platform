@@ -18,6 +18,7 @@ describe('PostsService', () => {
           provide: getModelToken(Post.name),
           useValue: {
             create: jest.fn(),
+            findById: jest.fn(),
           },
         },
       ],
@@ -48,12 +49,10 @@ describe('PostsService', () => {
       };
 
       jest.spyOn(postModel, 'create').mockResolvedValueOnce(mockCreatedPost);
-      jest
-        .spyOn(mockCreatedPost, 'populate')
-        .mockResolvedValueOnce({
-          ...mockCreatedPost,
-          author: { name: 'Mock User' },
-        });
+      jest.spyOn(mockCreatedPost, 'populate').mockResolvedValueOnce({
+        ...mockCreatedPost,
+        author: { name: 'Mock User' },
+      });
       const result = await postsService.createPost(mockUserId, createPostDto);
 
       expect(result).toEqual(mockPopulatePost);
@@ -73,12 +72,39 @@ describe('PostsService', () => {
       const mockError = new Error('Mock Error');
       jest.spyOn(postModel, 'create').mockRejectedValueOnce(mockError);
 
-      // Act & Assert
       await expect(
         postsService.createPost(mockUserId, createPostDto),
       ).rejects.toThrow(
         new HttpException('Mock Error', HttpStatus.INTERNAL_SERVER_ERROR),
       );
+    });
+  });
+
+  describe('getPostById', () => {
+    it('should return a post when found', async () => {
+      const mockPost = {
+        _id: 'mockPostId',
+        title: 'Test Title',
+        content: 'Test Content',
+        author: 'mockUserId',
+      };
+
+      jest.spyOn(postModel, 'findById').mockResolvedValueOnce(mockPost);
+
+      const result = await postsService.getPostById('postId');
+
+      expect(result).toEqual(mockPost);
+      expect(postModel.findById).toHaveBeenCalledWith('postId');
+    });
+
+    it('should throw NotFoundException when post is not found', async () => {
+      jest.spyOn(postModel, 'findById').mockResolvedValueOnce(null);
+
+      await expect(postsService.getPostById('nonexistentId')).rejects.toThrow(
+        new HttpException('Post not found', HttpStatus.NOT_FOUND),
+      );
+
+      expect(postModel.findById).toHaveBeenCalledWith('nonexistentId');
     });
   });
 });

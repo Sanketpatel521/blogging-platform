@@ -5,6 +5,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { AuthGuard } from '../../guards/auth/auth.guard';
 import { PostResponseDto } from './dto/post-response.dto';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { PostsAuthGuard } from '../../guards/posts-auth/posts-auth.guard';
 
 jest.mock('./posts.service');
 
@@ -18,6 +19,10 @@ describe('PostsController', () => {
       providers: [PostsService],
     })
       .overrideGuard(AuthGuard)
+      .useValue({
+        canActivate: jest.fn().mockResolvedValue(true),
+      })
+      .overrideGuard(PostsAuthGuard)
       .useValue({
         canActivate: jest.fn().mockResolvedValue(true),
       })
