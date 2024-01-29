@@ -13,8 +13,9 @@ export class ErrorLoggingMiddleware implements NestMiddleware {
 
       if (statusCode >= 400) {
         let logMessage = `Method: ${method} URL: ${originalUrl} Status Code: ${statusCode}`;
-        if (Object.keys(body).length !== 0)
-          logMessage += `Request body: ${JSON.stringify(body, null, 2)}`;
+        if (Object.keys(body).length !== 0) {
+          logMessage += ` Request body:\n${JSON.stringify(body, null, 2)}`;
+        }
         this.logger.log(logMessage);
       }
     });

@@ -1,7 +1,11 @@
-import { ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  BadRequestException,
+  HttpStatus,
+} from '@nestjs/common';
 import { Response } from 'express';
 import { ErrorFilter } from './error.filter';
-import { CustomError } from 'src/util/custom-error';
+import { CustomError } from '../../utils/custom-error';
 
 describe('ErrorFilter', () => {
   let errorFilter: ErrorFilter;
@@ -10,7 +14,7 @@ describe('ErrorFilter', () => {
     errorFilter = new ErrorFilter();
   });
 
-  it('should catch HttpException and return the correct response', () => {
+  it('should catch validation Error and return the correct response', () => {
     const mockResponse = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
@@ -22,14 +26,17 @@ describe('ErrorFilter', () => {
       }),
     } as unknown as ArgumentsHost;
 
-    const httpException = new HttpException('Custom error message', HttpStatus.BAD_REQUEST);
+    const badRequestError = new BadRequestException([
+      'validation error1',
+      'validation error2',
+    ]);
 
-    errorFilter.catch(httpException, mockHost);
+    errorFilter.catch(badRequestError, mockHost);
 
     expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST);
     expect(mockResponse.json).toHaveBeenCalledWith({
       statusCode: HttpStatus.BAD_REQUEST,
-      message: 'Custom error message',
+      message: ['validation error1', 'validation error2'],
     });
   });
 
@@ -45,7 +52,10 @@ describe('ErrorFilter', () => {
       }),
     } as unknown as ArgumentsHost;
 
-    const customError = new CustomError('Custom error message', HttpStatus.NOT_FOUND);
+    const customError = new CustomError(
+      'Custom error message',
+      HttpStatus.NOT_FOUND,
+    );
 
     errorFilter.catch(customError, mockHost);
 
@@ -72,10 +82,12 @@ describe('ErrorFilter', () => {
 
     errorFilter.catch(genericError, mockHost);
 
-    expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR);
+    expect(mockResponse.status).toHaveBeenCalledWith(
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
     expect(mockResponse.json).toHaveBeenCalledWith({
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-      message: 'Generic error message',
+      message: 'Internal server error',
     });
   });
 });

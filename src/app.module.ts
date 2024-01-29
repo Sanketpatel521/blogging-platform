@@ -23,10 +23,12 @@ import { ErrorFilter } from './filters/error/error.filter';
     AuthModule,
   ],
   controllers: [],
-  providers: [{
-    provide: APP_FILTER,
-    useClass: ErrorFilter,
-  },],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: ErrorFilter,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

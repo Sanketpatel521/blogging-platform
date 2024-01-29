@@ -4,7 +4,7 @@ import { UsersService } from './users.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './user.model';
 import { AuthService } from '../auth/auth.service';
-import { AuthGuard } from '../../guard/auth/auth.guard';
+import { AuthGuard } from '../../guards/auth/auth.guard';
 
 @Module({
   imports: [

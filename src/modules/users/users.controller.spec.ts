@@ -4,7 +4,7 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
-import { AuthGuard } from '../../guard/auth/auth.guard';
+import { AuthGuard } from '../../guards/auth/auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 jest.mock('./users.service'); // Mock the UsersService
