@@ -46,7 +46,7 @@ Before you begin, ensure you have the following installed on your machine:
 ## Run Tests
 **Run all test cases:**
    ```bash
-   npm test
+   npm run test
    ```
 
 ## Authentication
