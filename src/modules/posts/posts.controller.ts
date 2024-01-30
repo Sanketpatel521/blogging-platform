@@ -27,7 +27,6 @@ export class PostsController {
       req.user.userId,
       createPostDto,
     );
-    console.log(createdPost);
     return PostResponseDto.getPostResponseDto(createdPost);
   }
 

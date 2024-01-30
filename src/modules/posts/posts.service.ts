@@ -33,11 +33,9 @@ export class PostsService {
     postId: string,
     updatePostDto: UpdatePostDto,
   ): Promise<PostDocument> {
-    const updatedPost = await this.postModel.findByIdAndUpdate(
-      postId,
-      updatePostDto,
-      { new: true },
-    );
+    const updatedPost = await this.postModel
+      .findByIdAndUpdate(postId, updatePostDto, { new: true })
+      .populate('author', 'name -_id');
 
     if (!updatedPost) {
       throw new CustomError('Post not found', HttpStatus.NOT_FOUND);
@@ -59,8 +57,7 @@ export class PostsService {
     const latestPosts = await this.postModel
       .find()
       .sort({ createdAt: -1 })
-      .populate('author', 'name -_id')
-      .exec();
+      .populate('author', 'name -_id');
 
     return latestPosts;
   }

@@ -18,7 +18,13 @@ describe('PostsService', () => {
           provide: getModelToken(Post.name),
           useValue: {
             create: jest.fn(),
+            find: jest.fn().mockReturnThis(),
             findById: jest.fn(),
+            findByIdAndUpdate: jest.fn().mockReturnThis(),
+            findByIdAndDelete: jest.fn(),
+            populate: jest.fn(),
+            sort: jest.fn().mockReturnThis(),
+            exec: jest.fn(),
           },
         },
       ],
@@ -42,6 +48,7 @@ describe('PostsService', () => {
         content: 'Test Content',
         author: mockUserId,
         populate: jest.fn(),
+        createdAt: new Date('2024-01-30T00:00:00Z'),
       };
       const mockPopulatePost: any = {
         ...mockCreatedPost,
@@ -87,6 +94,7 @@ describe('PostsService', () => {
         title: 'Test Title',
         content: 'Test Content',
         author: 'mockUserId',
+        createdAt: new Date('2024-01-30T00:00:00Z'),
       };
 
       jest.spyOn(postModel, 'findById').mockResolvedValueOnce(mockPost);
@@ -105,6 +113,126 @@ describe('PostsService', () => {
       );
 
       expect(postModel.findById).toHaveBeenCalledWith('nonexistentId');
+    });
+  });
+
+  describe('updatePost', () => {
+    it('should update a post and return the updated post', async () => {
+      const mockUpdatedPost: any = {
+        _id: 'mockPostId',
+        title: 'Updated Title',
+        content: 'Updated Content',
+        author: 'mockUserId',
+        createdAt: new Date('2024-01-30T00:00:00Z'),
+      };
+
+      jest
+        .spyOn(postModel, 'populate')
+        .mockResolvedValueOnce({
+          ...mockUpdatedPost,
+          author: { name: 'Mock User' },
+        });
+      const result = await postsService.updatePost('postId', {
+        title: 'Updated Title',
+        content: 'Updated Content',
+      });
+
+      expect(result).toEqual({
+        ...mockUpdatedPost,
+        author: { name: 'Mock User' },
+      });
+      expect(postModel.findByIdAndUpdate).toHaveBeenCalledWith(
+        'postId',
+        { title: 'Updated Title', content: 'Updated Content' },
+        { new: true },
+      );
+    });
+
+    it('should throw NotFoundException when post is not found during update', async () => {
+      jest.spyOn(postModel, 'populate').mockResolvedValueOnce(null);
+
+      await expect(
+        postsService.updatePost('nonexistentId', {
+          title: 'Updated Title',
+          content: 'Updated Content',
+        }),
+      ).rejects.toThrow(
+        new HttpException('Post not found', HttpStatus.NOT_FOUND),
+      );
+
+      expect(postModel.findByIdAndUpdate).toHaveBeenCalledWith(
+        'nonexistentId',
+        { title: 'Updated Title', content: 'Updated Content' },
+        { new: true },
+      );
+    });
+  });
+
+  describe('deletePost', () => {
+    it('should delete a post and return the deleted post', async () => {
+      const mockDeletedPost: any = {
+        _id: 'mockPostId',
+        title: 'Test Title',
+        content: 'Test Content',
+        author: 'mockUserId',
+        createdAt: new Date('2024-01-30T00:00:00Z'),
+      };
+
+      jest
+        .spyOn(postModel, 'findByIdAndDelete')
+        .mockResolvedValueOnce(mockDeletedPost);
+
+      const result = await postsService.deletePost('postId');
+
+      expect(result).toEqual(mockDeletedPost);
+      expect(postModel.findByIdAndDelete).toHaveBeenCalledWith('postId');
+    });
+
+    it('should throw NotFoundException when post is not found during deletion', async () => {
+      jest.spyOn(postModel, 'findByIdAndDelete').mockResolvedValueOnce(null);
+
+      await expect(postsService.deletePost('nonexistentId')).rejects.toThrow(
+        new HttpException('Post not found', HttpStatus.NOT_FOUND),
+      );
+
+      expect(postModel.findByIdAndDelete).toHaveBeenCalledWith('nonexistentId');
+    });
+  });
+
+  describe('getLatestPosts', () => {
+    it('should return an array of PostDocument in descending order of creation', async () => {
+      const mockPosts: any = [
+        {
+          _id: '1',
+          title: 'Post 1',
+          content: 'Content 1',
+          createdAt: new Date('2024-01-30T00:00:00Z'),
+          author: { name: 'User 1' },
+        },
+        {
+          _id: '2',
+          title: 'Post 2',
+          content: 'Content 2',
+          createdAt: new Date('2024-01-29T00:00:00Z'),
+          author: { name: 'User 2' },
+        },
+      ];
+
+      jest.spyOn(postModel, 'populate').mockResolvedValueOnce(mockPosts);
+
+      const result = await postsService.getLatestPosts();
+
+      expect(result).toEqual(mockPosts);
+      expect(postModel.find).toHaveBeenCalledWith();
+    });
+
+    it('should handle errors and throw InternalServerError', async () => {
+      const mockError = new Error('Mock Error');
+      jest.spyOn(postModel, 'populate').mockRejectedValueOnce(mockError);
+
+      await expect(postsService.getLatestPosts()).rejects.toThrow(
+        new HttpException('Mock Error', HttpStatus.INTERNAL_SERVER_ERROR),
+      );
     });
   });
 });

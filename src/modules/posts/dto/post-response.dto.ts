@@ -12,6 +12,8 @@ export class PostResponseDto {
   @Expose()
   @Type(() => UserResponseDto)
   author: UserResponseDto;
+  @Expose()
+  createdAt: Date;
 
   static getPostResponseDto(post: PostDocument): PostResponseDto {
     return plainToClass(PostResponseDto, post?.toObject(), {
