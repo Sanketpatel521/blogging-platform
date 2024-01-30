@@ -42,6 +42,13 @@ Before you begin, ensure you have the following installed on your machine:
    ```bash
    npm run start
    ```
+   - The backend API will be available at http://localhost:3000
+## Run Tests
+**Run all test cases:**
+   ```bash
+   npm test
+   ```
+
 ## Authentication
 **Start the application:**
    This application uses JSON Web Tokens (JWT) for authentication. Two guards, AuthGuard and PostsAuthGuard, are implemented for authorization.
