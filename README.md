@@ -64,12 +64,12 @@ This guard checks for a valid JWT token in the request header. If a valid token 
 This guard is specific to post-related actions. It extends the AuthGuard and additionally checks if the author of the post matches the userId from the JWT token. If they match, access is allowed; otherwise, a Forbidden error is thrown.
 
 ## API Endpoints
-- POST /api/users/register: Register a new user.
-- POST /api/users/login: Log in and receive a JWT token.
-- GET /api/users/profile: Get user profile (requires authentication).
-- PUT /api/users/update: Update user details (requires authentication).
-- DELETE /api/users/delete: Delete user account (requires authentication).
-- POST /api/posts: Create a new post (requires authentication).
-- GET /api/posts/latest: Get the latest posts.
-- PUT /api/posts/:id: Update a post (requires authentication and ownership).
-- DELETE /api/posts/:id: Delete a post (requires authentication and ownership).
+- POST /users/register: Register a new user.
+- POST /users/login: Log in and receive a JWT token.
+- GET /users/profile: Get user profile (requires authentication).
+- PUT /users/update: Update user details (requires authentication).
+- DELETE /users/delete: Delete user account (requires authentication).
+- POST /posts: Create a new post (requires authentication).
+- GET /posts/latest: Get the latest posts.
+- PUT /posts/:id: Update a post (requires authentication and ownership).
+- DELETE /posts/:id: Delete a post (requires authentication and ownership).
