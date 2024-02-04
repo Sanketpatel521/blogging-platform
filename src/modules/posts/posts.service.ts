@@ -63,6 +63,5 @@ export class PostsService {
       .populate('author', 'name')
       .skip((page - 1) * pageSize)
       .limit(pageSize + 1);
-    
   }
 }

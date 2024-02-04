@@ -218,16 +218,15 @@ describe('PostsService', () => {
 
   describe('getLatestPosts', () => {
     it('should return an array of PostDocument in descending order of creation', async () => {
-      const mockPaginationDto : PaginationDto = {
+      const mockPaginationDto: PaginationDto = {
         pageSize: 2,
-        page:1
-      }
-      
+        page: 1,
+      };
+
       const result = await postsService.getLatestPosts(mockPaginationDto);
 
       expect(result).toEqual(mockPosts);
       expect(postModel.find).toHaveBeenCalledWith();
     });
-
   });
 });

@@ -6,8 +6,6 @@ import { User } from '../users/user.model';
 export class Post extends Document {
   @Prop({ required: true })
   title: string;
-  @Prop()
-  coverImage: string;
   @Prop({ required: true })
   content: string;
   @Prop({ required: true, type: Types.ObjectId, ref: 'User' })

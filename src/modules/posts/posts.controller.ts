@@ -54,14 +54,16 @@ export class PostsController {
 
   @Get('/latest')
   async getLatestPosts(@Query() paginationDto: PaginationDto) {
-    paginationDto.page = paginationDto?.page || 1 
-    paginationDto.pageSize = paginationDto?.pageSize || 5
+    paginationDto.page = paginationDto?.page || 1;
+    paginationDto.pageSize = paginationDto?.pageSize || 5;
 
     const latestPosts = await this.postsService.getLatestPosts(paginationDto);
     return {
-      posts: latestPosts.slice(0, paginationDto.pageSize).map((post) => PostResponseDto.getPostResponseDto(post)),
+      posts: latestPosts
+        .slice(0, paginationDto.pageSize)
+        .map((post) => PostResponseDto.getPostResponseDto(post)),
       hasMore: latestPosts.length > paginationDto.pageSize,
-      page: paginationDto.page
+      page: paginationDto.page,
     };
   }
 }

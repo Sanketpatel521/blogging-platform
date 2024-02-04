@@ -95,10 +95,10 @@ describe('PostsController', () => {
 
   describe('getAllPosts', () => {
     it('should return an array of PostResponseDto with page detail', async () => {
-      const mockPaginationDto : PaginationDto = {
+      const mockPaginationDto: PaginationDto = {
         pageSize: 2,
-        page:1
-      }
+        page: 1,
+      };
       const mockPosts: any[] = [
         {
           _id: '1',
@@ -132,27 +132,29 @@ describe('PostsController', () => {
 
       const result = await postsController.getLatestPosts(mockPaginationDto);
 
-      expect(result).toEqual(
-        {
-          posts: mockPosts.map((post) => PostResponseDto.getPostResponseDto(post)),
-          hasMore: false,
-          page: 1
-        }
-      );
+      expect(result).toEqual({
+        posts: mockPosts.map((post) =>
+          PostResponseDto.getPostResponseDto(post),
+        ),
+        hasMore: false,
+        page: 1,
+      });
       expect(postsService.getLatestPosts).toHaveBeenCalled();
     });
 
     it('should handle errors and throw InternalServerError', async () => {
-      const mockPaginationDto : PaginationDto = {
+      const mockPaginationDto: PaginationDto = {
         pageSize: 2,
-        page:1
-      }
+        page: 1,
+      };
       const mockError = new Error('Mock Error');
       jest
         .spyOn(postsService, 'getLatestPosts')
         .mockRejectedValueOnce(mockError);
 
-      await expect(postsController.getLatestPosts(mockPaginationDto)).rejects.toThrow(
+      await expect(
+        postsController.getLatestPosts(mockPaginationDto),
+      ).rejects.toThrow(
         new HttpException('Mock Error', HttpStatus.INTERNAL_SERVER_ERROR),
       );
     });
