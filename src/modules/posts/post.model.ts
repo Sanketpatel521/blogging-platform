@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { User } from '../users/user.model';
 
-@Schema()
+@Schema({ timestamps: true })
 export class Post extends Document {
   @Prop({ required: true })
   title: string;
