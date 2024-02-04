@@ -1,7 +1,10 @@
 import { Expose, plainToClass } from 'class-transformer';
 import { UserDocument } from '../user.model';
+import { Types } from 'mongoose';
 
 export class UserResponseDto {
+  @Expose({ name: '_id' })
+  userId: string;
   @Expose()
   name: string;
   @Expose()
@@ -14,6 +17,7 @@ export class UserResponseDto {
   static getUserResponseDto(user: UserDocument): UserResponseDto {
     return plainToClass(UserResponseDto, user?.toObject(), {
       strategy: 'excludeAll',
+      enableImplicitConversion: true,
     });
   }
 }

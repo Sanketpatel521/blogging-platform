@@ -15,7 +15,7 @@ export class UsersService {
     private readonly authService: AuthService,
   ) {}
 
-  async createUser(userDto: CreateUserDto): Promise<UserDocument> {
+  async createUser(userDto: CreateUserDto): Promise<{ token: string }> {
     const existingUser = await this.userModel.findOne({ email: userDto.email });
     if (existingUser) {
       throw new CustomError(
@@ -27,7 +27,12 @@ export class UsersService {
     // Hash password before saving
     userDto.password = await this.authService.hashPassword(userDto.password);
     const createdUser = await this.userModel.create(userDto);
-    return createdUser;
+
+    // Generate JWT token
+    const token = this.authService.generateJwtToken({
+      userId: createdUser._id.toString(),
+    });
+    return { token };
   }
 
   async login(userDto: LoginUserDto): Promise<{ token: string }> {

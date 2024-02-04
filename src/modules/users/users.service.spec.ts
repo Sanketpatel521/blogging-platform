@@ -58,9 +58,12 @@ describe('UsersService', () => {
         .spyOn(authService, 'hashPassword')
         .mockResolvedValueOnce('hashedPassword');
       jest.spyOn(userModel, 'create').mockResolvedValueOnce(mockCreatedUser);
+      jest
+        .spyOn(authService, 'generateJwtToken')
+        .mockReturnValueOnce('mockToken');
 
       const result = await usersService.createUser(createUserDto);
-      expect(result).toEqual(mockCreatedUser);
+      expect(result).toEqual({ token: 'mockToken' });
     });
 
     it('should throw an error if the user with the given email already exists', async () => {

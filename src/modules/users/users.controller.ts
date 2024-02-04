@@ -20,9 +20,9 @@ export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Post('register')
-  async create(@Body() userDto: CreateUserDto): Promise<UserResponseDto> {
-    const createdUser = await this.usersService.createUser(userDto);
-    return UserResponseDto.getUserResponseDto(createdUser);
+  async create(@Body() userDto: CreateUserDto): Promise<{ token: string }> {
+    const { token } = await this.usersService.createUser(userDto);
+    return { token };
   }
 
   @Post('login')

@@ -52,7 +52,10 @@ describe('UsersController', () => {
         }),
       };
 
-      jest.spyOn(usersService, 'createUser').mockResolvedValue(mockCreatedUser);
+      const mockToken = 'mockToken';
+      jest
+        .spyOn(usersService, 'createUser')
+        .mockResolvedValue({ token: mockToken });
 
       const expectedResponse: any = {
         name: 'test',
@@ -61,7 +64,7 @@ describe('UsersController', () => {
       };
 
       const result = await usersController.create(createUserDto);
-      expect(result).toEqual(expectedResponse);
+      expect(result).toEqual({ token: mockToken });
     });
 
     it('should handle errors and throw HttpException', async () => {
@@ -119,6 +122,7 @@ describe('UsersController', () => {
 
     it('should update user and return a UserResponseDto of updated user', async () => {
       const expectedResponse: any = {
+        userId: 'mockUserId',
         name: 'new test',
         email: 'test@example.com',
         phoneNumber: '9876543210',
@@ -163,6 +167,7 @@ describe('UsersController', () => {
 
     it('should get user profile and return a UserResponseDto', async () => {
       const expectedResponse: any = {
+        userId: 'mockUserId',
         name: 'test',
         email: 'test@example.com',
         phoneNumber: '9876543210',
@@ -207,6 +212,7 @@ describe('UsersController', () => {
 
     it('should delete user and return a UserResponseDto', async () => {
       const expectedResponse: any = {
+        userId: 'mockUserId',
         name: 'test',
         email: 'test@example.com',
         phoneNumber: '9876543210',

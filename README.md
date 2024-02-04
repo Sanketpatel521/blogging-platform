@@ -31,6 +31,7 @@ Before you begin, ensure you have the following installed on your machine:
    ```bash
     MONGODB_URI= mongodb://localhost:27017/blog_platform (Can also use MongoDB Atlas URI)
     JWT_SECRET=your-secret-key
+    CORS_ALLOWED_ORIGIN=http://localhost:3000 (Front end URL)
    ```
    - Node.js to generate a random secret key
       ```bash
@@ -42,7 +43,7 @@ Before you begin, ensure you have the following installed on your machine:
    ```bash
    npm run start
    ```
-   - The backend API will be available at http://localhost:3000
+   - The backend API will be available at http://localhost:4000
 ## Run Tests
 **Run all test cases:**
    ```bash
@@ -64,7 +65,7 @@ This guard checks for a valid JWT token in the request header. If a valid token 
 This guard is specific to post-related actions. It extends the AuthGuard and additionally checks if the author of the post matches the userId from the JWT token. If they match, access is allowed; otherwise, a Forbidden error is thrown.
 
 ## API Endpoints
-- POST /users/register: Register a new user.
+- POST /users/register: Register a new user and receive a JWT token.
 - POST /users/login: Log in and receive a JWT token.
 - GET /users/profile: Get user profile (requires authentication).
 - PUT /users/update: Update user details (requires authentication).

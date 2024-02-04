@@ -52,13 +52,13 @@ describe('PostsService', () => {
       };
       const mockPopulatePost: any = {
         ...mockCreatedPost,
-        author: { name: 'Mock User' },
+        author: { name: 'Mock User', userid: mockUserId },
       };
 
       jest.spyOn(postModel, 'create').mockResolvedValueOnce(mockCreatedPost);
       jest.spyOn(mockCreatedPost, 'populate').mockResolvedValueOnce({
         ...mockCreatedPost,
-        author: { name: 'Mock User' },
+        author: { name: 'Mock User', userid: mockUserId },
       });
       const result = await postsService.createPost(mockUserId, createPostDto);
 
@@ -126,12 +126,10 @@ describe('PostsService', () => {
         createdAt: new Date('2024-01-30T00:00:00Z'),
       };
 
-      jest
-        .spyOn(postModel, 'populate')
-        .mockResolvedValueOnce({
-          ...mockUpdatedPost,
-          author: { name: 'Mock User' },
-        });
+      jest.spyOn(postModel, 'populate').mockResolvedValueOnce({
+        ...mockUpdatedPost,
+        author: { name: 'Mock User', userId: 'mockUserId' },
+      });
       const result = await postsService.updatePost('postId', {
         title: 'Updated Title',
         content: 'Updated Content',
@@ -139,7 +137,7 @@ describe('PostsService', () => {
 
       expect(result).toEqual({
         ...mockUpdatedPost,
-        author: { name: 'Mock User' },
+        author: { name: 'Mock User', userId: 'mockUserId' },
       });
       expect(postModel.findByIdAndUpdate).toHaveBeenCalledWith(
         'postId',
@@ -207,14 +205,14 @@ describe('PostsService', () => {
           title: 'Post 1',
           content: 'Content 1',
           createdAt: new Date('2024-01-30T00:00:00Z'),
-          author: { name: 'User 1' },
+          author: { name: 'User 1', userId: 'mockUserId' },
         },
         {
           _id: '2',
           title: 'Post 2',
           content: 'Content 2',
           createdAt: new Date('2024-01-29T00:00:00Z'),
-          author: { name: 'User 2' },
+          author: { name: 'User 2', userId: 'mockUserId' },
         },
       ];
 
