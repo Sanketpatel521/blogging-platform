@@ -5,6 +5,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { Post, PostDocument } from './post.model';
 import { CustomError } from '../../utils/custom-error';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { PaginationDto } from './dto/pagination.dto';
 
 @Injectable()
 export class PostsService {
@@ -53,12 +54,15 @@ export class PostsService {
 
     return deletedPost;
   }
-  async getLatestPosts(): Promise<PostDocument[]> {
-    const latestPosts = await this.postModel
+  async getLatestPosts(paginationDto: PaginationDto): Promise<Post[]> {
+    const { page, pageSize } = paginationDto;
+
+    return await this.postModel
       .find()
       .sort({ createdAt: -1 })
-      .populate('author', 'name');
-
-    return latestPosts;
+      .populate('author', 'name')
+      .skip((page - 1) * pageSize)
+      .limit(pageSize + 1);
+    
   }
 }

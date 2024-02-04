@@ -6,6 +6,7 @@ import { AuthGuard } from '../../guards/auth/auth.guard';
 import { PostResponseDto } from './dto/post-response.dto';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { PostsAuthGuard } from '../../guards/posts-auth/posts-auth.guard';
+import { PaginationDto } from './dto/pagination.dto';
 
 jest.mock('./posts.service');
 
@@ -93,7 +94,11 @@ describe('PostsController', () => {
   });
 
   describe('getAllPosts', () => {
-    it('should return an array of PostResponseDto', async () => {
+    it('should return an array of PostResponseDto with page detail', async () => {
+      const mockPaginationDto : PaginationDto = {
+        pageSize: 2,
+        page:1
+      }
       const mockPosts: any[] = [
         {
           _id: '1',
@@ -125,21 +130,29 @@ describe('PostsController', () => {
         .spyOn(postsService, 'getLatestPosts')
         .mockResolvedValueOnce(mockPosts);
 
-      const result = await postsController.getLatestPosts();
+      const result = await postsController.getLatestPosts(mockPaginationDto);
 
       expect(result).toEqual(
-        mockPosts.map((post) => PostResponseDto.getPostResponseDto(post)),
+        {
+          posts: mockPosts.map((post) => PostResponseDto.getPostResponseDto(post)),
+          hasMore: false,
+          page: 1
+        }
       );
       expect(postsService.getLatestPosts).toHaveBeenCalled();
     });
 
     it('should handle errors and throw InternalServerError', async () => {
+      const mockPaginationDto : PaginationDto = {
+        pageSize: 2,
+        page:1
+      }
       const mockError = new Error('Mock Error');
       jest
         .spyOn(postsService, 'getLatestPosts')
         .mockRejectedValueOnce(mockError);
 
-      await expect(postsController.getLatestPosts()).rejects.toThrow(
+      await expect(postsController.getLatestPosts(mockPaginationDto)).rejects.toThrow(
         new HttpException('Mock Error', HttpStatus.INTERNAL_SERVER_ERROR),
       );
     });

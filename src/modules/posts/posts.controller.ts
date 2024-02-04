@@ -8,6 +8,7 @@ import {
   Get,
   Param,
   Put,
+  Query,
 } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { PostsService } from './posts.service';
@@ -15,6 +16,7 @@ import { AuthGuard } from '../../guards/auth/auth.guard';
 import { PostResponseDto } from './dto/post-response.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostsAuthGuard } from '../../guards/posts-auth/posts-auth.guard';
+import { PaginationDto } from './dto/pagination.dto';
 
 @Controller('posts')
 export class PostsController {
@@ -51,8 +53,15 @@ export class PostsController {
   }
 
   @Get('/latest')
-  async getLatestPosts() {
-    const latestPosts = await this.postsService.getLatestPosts();
-    return latestPosts.map((post) => PostResponseDto.getPostResponseDto(post));
+  async getLatestPosts(@Query() paginationDto: PaginationDto) {
+    paginationDto.page = paginationDto?.page || 1 
+    paginationDto.pageSize = paginationDto?.pageSize || 5
+
+    const latestPosts = await this.postsService.getLatestPosts(paginationDto);
+    return {
+      posts: latestPosts.slice(0, paginationDto.pageSize).map((post) => PostResponseDto.getPostResponseDto(post)),
+      hasMore: latestPosts.length > paginationDto.pageSize,
+      page: paginationDto.page
+    };
   }
 }

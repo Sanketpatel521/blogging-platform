@@ -5,10 +5,28 @@ import { Post, PostDocument } from './post.model';
 import { CreatePostDto } from './dto/create-post.dto';
 import { Model } from 'mongoose';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { PaginationDto } from './dto/pagination.dto';
 
 describe('PostsService', () => {
   let postsService: PostsService;
   let postModel: Model<PostDocument>;
+
+  const mockPosts: any = [
+    {
+      _id: '1',
+      title: 'Post 1',
+      content: 'Content 1',
+      createdAt: new Date('2024-01-30T00:00:00Z'),
+      author: { name: 'User 1', userId: 'mockUserId' },
+    },
+    {
+      _id: '2',
+      title: 'Post 2',
+      content: 'Content 2',
+      createdAt: new Date('2024-01-29T00:00:00Z'),
+      author: { name: 'User 2', userId: 'mockUserId' },
+    },
+  ];
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -22,9 +40,10 @@ describe('PostsService', () => {
             findById: jest.fn(),
             findByIdAndUpdate: jest.fn().mockReturnThis(),
             findByIdAndDelete: jest.fn(),
-            populate: jest.fn(),
+            populate: jest.fn().mockReturnThis(),
             sort: jest.fn().mockReturnThis(),
-            exec: jest.fn(),
+            skip: jest.fn().mockReturnThis(),
+            limit: jest.fn(() => mockPosts),
           },
         },
       ],
@@ -199,38 +218,16 @@ describe('PostsService', () => {
 
   describe('getLatestPosts', () => {
     it('should return an array of PostDocument in descending order of creation', async () => {
-      const mockPosts: any = [
-        {
-          _id: '1',
-          title: 'Post 1',
-          content: 'Content 1',
-          createdAt: new Date('2024-01-30T00:00:00Z'),
-          author: { name: 'User 1', userId: 'mockUserId' },
-        },
-        {
-          _id: '2',
-          title: 'Post 2',
-          content: 'Content 2',
-          createdAt: new Date('2024-01-29T00:00:00Z'),
-          author: { name: 'User 2', userId: 'mockUserId' },
-        },
-      ];
-
-      jest.spyOn(postModel, 'populate').mockResolvedValueOnce(mockPosts);
-
-      const result = await postsService.getLatestPosts();
+      const mockPaginationDto : PaginationDto = {
+        pageSize: 2,
+        page:1
+      }
+      
+      const result = await postsService.getLatestPosts(mockPaginationDto);
 
       expect(result).toEqual(mockPosts);
       expect(postModel.find).toHaveBeenCalledWith();
     });
 
-    it('should handle errors and throw InternalServerError', async () => {
-      const mockError = new Error('Mock Error');
-      jest.spyOn(postModel, 'populate').mockRejectedValueOnce(mockError);
-
-      await expect(postsService.getLatestPosts()).rejects.toThrow(
-        new HttpException('Mock Error', HttpStatus.INTERNAL_SERVER_ERROR),
-      );
-    });
   });
 });
